@@ -46,7 +46,31 @@ def _merged(xs, ys, cmp=cmp_standard):
     and returns a new list containing the elements of both xs and ys.
     Runs in linear time.
     '''
+    final_list = []
+    
+    i = 0 
+    j= 0 
 
+    while i != len(xs) and j != len(ys):
+        if (cmp == cmp_standard and xs[i] >= ys[j]) or (cmp == cmp_reverse and xs[i] <= ys[j]):
+            final_list.append(ys[j])
+            j += 1
+        elif (cmp == cmp_standard and ys[j] >= xs[i]) or (cmp == cmp_reverse and ys[j] <= xs[i]):
+            final_list.append(xs[i])
+            i += 1
+
+    if i == len(xs) and j == len(ys):
+        return final_list
+
+    elif i == len(xs):
+        for number in range(j, len(ys)):
+            final_list.append(ys[number])
+        return final_list
+
+    elif j == len(ys): 
+        for number in range(i, len(xs)):
+            final_list.append(xs[number])
+        return final_list
 
 def merge_sorted(xs, cmp=cmp_standard):
     '''
@@ -63,7 +87,19 @@ def merge_sorted(xs, cmp=cmp_standard):
 
     You should return a sorted version of the input list xs
     '''
+    
+    if len(xs) <= 1:
+        return xs
 
+    else: 
+        middle = len(xs) // 2 
+        left = xs[:middle]
+        right = xs[middle:]
+
+        merge_sorted(left, cmp = cmp)
+        merge_sorted(right, cmp = cmp)
+
+        return _merged(merge_sorted(left, cmp = cmp), merge_sorted(right, cmp = cmp), cmp = cmp)
 
 def quick_sorted(xs, cmp=cmp_standard):
     '''
@@ -86,7 +122,32 @@ def quick_sorted(xs, cmp=cmp_standard):
 
     You should return a sorted version of the input list xs
     '''
+    
+    less_than = []
+    equal = []
+    greater_than = []
 
+    if len(xs) <= 1:
+        return xs
+
+    else: 
+        pivot = xs[0]
+        for number in xs:
+            if number < pivot:
+                less_than.append(number)
+            elif number > pivot:
+                greater_than.append(number)
+            elif number == pivot:
+                equal.append(number)
+
+        less = quick_sorted(less_than, cmp = cmp)
+        greater = quick_sorted(greater_than, cmp = cmp)
+
+        if cmp == cmp_standard:
+            return less + equal + greater
+
+        elif cmp == cmp_reverse:
+            return greater + equal + less
 
 def quick_sort(xs, cmp=cmp_standard):
     '''
